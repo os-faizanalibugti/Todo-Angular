@@ -1,0 +1,111 @@
+<div
+  class="{{
+    darkMode ? 'dark' : 'light'
+  }} antialiased flex flex-col place-items-center"
+>
+  <div
+    class="relative min-h-screen w-96 text-gray-900 bg-gray-200 dark:bg-black"
+  >
+    <div
+      class="h-48 bg-no-repeat bg-cover"
+      style="background-image: url(../assets/bg-mobile-light.jpg)"
+    >
+      <div class="flex justify-between">
+        <h1 class="font-bold text-white tracking-wider uppercase p-8">Todo</h1>
+        <button (click)="toggleTheme()" class="p-8">
+          <img
+            [src]="
+              darkMode ? '../assets/icon-sun.svg' : '../assets/icon-moon.svg'
+            "
+            alt="theme"
+          />
+        </button>
+      </div>
+
+      <form
+        (ngSubmit)="submitForm(form)"
+        #form="ngForm"
+        class="relative pl-8 pr-8"
+      >
+        <div
+          class="absolute m-2 rounded-full h-6 w-6 border border-gray-500"
+        ></div>
+        <input
+          class="w-full p-2 rounded-md pl-10 dark:bg-slate-700"
+          type="text"
+          placeholder="Create a new todo..."
+          name="todo"
+          required
+          [(ngModel)]="todoInput"
+        />
+      </form>
+    </div>
+
+    <div class="p-4 mx-6 -mt-6 rounded-md bg-white dark:bg-slate-700">
+      <ul>
+        <li
+          *ngFor="let todo of displayTodos(); let i = index"
+          class="flex justify-between mb-2 cursor-move dark:bg-slate-700 border-b-gray-500"
+          draggable="true"
+          (dragover)="$event.preventDefault()"
+          (dragstart)="droppedOn($event)"
+          (drop)="draggedElement($event)"
+          [attr.data-todoId]="i"
+        >
+          <div
+            class="flex cursor-pointer rounded-full h-6 w-6 border border-gray-500"
+            (click)="toggleComplete(todo)"
+            [ngClass]="{
+              'bg-gradient-to-tr from-cyan-400 to-violet-900': todo.complete
+            }"
+          >
+            <img
+              *ngIf="todo.complete"
+              src="../assets/icon-check.svg"
+              alt="check"
+            />
+          </div>
+          <p
+            class="dark:text-white w-40 text-lg"
+            [ngClass]="{ 'line-through': todo.complete }"
+          >
+            {{ todo.task }}
+          </p>
+          <div class="cursor-pointer" *ngIf="todo.id" (click)="editTodo(todo)">
+            <span class="fas fa-pen"></span>
+          </div>
+          <div class="cursor-pointer" *ngIf="todo.id" (click)="deleteTodo(todo.id)">
+            <img src="../assets/icon-cross.svg" alt="" />
+          </div>
+        </li>
+      </ul>
+
+      <div class="flex justify-between dark:text-gray-400">
+        <p>{{ tasksLeft }} items left</p>
+        <p class="cursor-pointer" (click)="clearCompletedTodos()">
+          Clear Completed
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="absolute bottom-0 w-full flex flex-col place-items-center rounded"
+    >
+      <nav class="p-4 mx-6 mb-4 w-10/12 rounded-md bg-white dark:bg-slate-700">
+        <ul class="flex justify-evenly font-bold text-gray-500">
+          <ng-container *ngFor="let tab of tabs">
+            <li
+              class="cursor-pointer"
+              [ngClass]="{ 'text-blue-400': tab.active }"
+              (click)="toggleActiveTab(tab.id)"
+            >
+              {{ tab.tab }}
+            </li>
+          </ng-container>
+        </ul>
+      </nav>
+
+      <p class="text-gray-400">Drag and drop to reorder list</p>
+    </div>
+  </div>
+</div>
